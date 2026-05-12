@@ -1,0 +1,45 @@
+.editor-page {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 60px 96px;
+}
+
+.editor-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--text-muted);
+}
+
+.editor-titulo-wrap {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+
+.editor-emoji {
+  font-size: 2.5rem;
+  line-height: 1;
+  cursor: default;
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.editor-titulo {
+  flex: 1;
+  font-size: 2.5rem;
+  font-weight: 700;
+  line-height: 1.2;
+  outline: none;
+  color: var(--text);
+  word-break: break-word;
+  min-height: 1.2em;
+}
+
+.editor-titulo:empty::before {
+  content: attr(data-placeholder);
+  color: var(--text-muted);
+  pointer-events: none;
+}

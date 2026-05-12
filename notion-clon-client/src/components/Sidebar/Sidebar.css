@@ -1,0 +1,196 @@
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--sidebar-bg);
+  border-right: 1px solid var(--border);
+  width: var(--sidebar-width);
+  min-width: var(--sidebar-width);
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+  min-height: 48px;
+}
+
+.sidebar-workspace {
+  font-size: 0.875rem;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sidebar-header-actions {
+  display: flex;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.sidebar-icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  color: var(--text-muted);
+  padding: 2px 4px;
+  border-radius: 4px;
+  transition: background 0.1s;
+  line-height: 1;
+}
+
+.sidebar-icon-btn:hover {
+  background: var(--hover);
+}
+
+.sidebar-buscar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 6px 8px 2px;
+  padding: 6px 10px;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: background 0.1s, border-color 0.1s;
+  width: calc(100% - 16px);
+}
+
+.sidebar-buscar:hover {
+  background: var(--hover);
+  border-color: var(--accent);
+}
+
+.sidebar-buscar kbd {
+  margin-left: auto;
+  font-size: 0.65rem;
+  background: var(--hover);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 1px 5px;
+  font-family: var(--font);
+}
+
+.sidebar-paginas {
+  flex: 1;
+  overflow-y: auto;
+  padding: 6px 0;
+}
+
+.sidebar-empty {
+  padding: 12px 16px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.sidebar-footer {
+  border-top: 1px solid var(--border);
+  padding: 8px;
+}
+
+.sidebar-nueva-pagina {
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  padding: 6px 12px;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background 0.1s;
+}
+
+.sidebar-nueva-pagina:hover {
+  background: var(--hover);
+  color: var(--text);
+}
+
+/* PaginaItem */
+.pagina-item {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  height: 30px;
+  cursor: pointer;
+  border-radius: 4px;
+  margin: 0 4px;
+  padding-right: 4px;
+  position: relative;
+}
+
+.pagina-item:hover {
+  background: var(--hover);
+}
+
+.pagina-item.activa {
+  background: rgba(35, 131, 226, 0.08);
+}
+
+.pagina-chevron {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  padding: 2px;
+  width: 18px;
+  flex-shrink: 0;
+}
+
+.pagina-emoji {
+  font-size: 0.9rem;
+  flex-shrink: 0;
+  width: 20px;
+  text-align: center;
+}
+
+.pagina-titulo {
+  flex: 1;
+  font-size: 0.875rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.pagina-titulo-input {
+  flex: 1;
+  font-size: 0.875rem;
+  border: none;
+  outline: none;
+  background: transparent;
+  min-width: 0;
+}
+
+.pagina-acciones {
+  display: none;
+  gap: 2px;
+}
+
+.pagina-item:hover .pagina-acciones {
+  display: flex;
+}
+
+.pagina-acciones button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  padding: 2px 4px;
+  border-radius: 3px;
+  line-height: 1;
+}
+
+.pagina-acciones button:hover {
+  background: rgba(55, 53, 47, 0.12);
+  color: var(--text);
+}

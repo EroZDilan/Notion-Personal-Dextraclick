@@ -1,0 +1,99 @@
+# ============================================================
+#  .NET / ASP.NET Core
+# ============================================================
+**/bin/
+**/obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.nupkg
+*.snupkg
+project.lock.json
+project.fragment.lock.json
+.vs/
+launchSettings.json
+
+# Secrets & local config
+appsettings.Development.json
+appsettings.Local.json
+secrets.json
+
+# SQLite databases
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+*.db
+
+# EF Core migrations backup (keep Migrations/ folder, ignore snapshots if desired)
+# Uncomment if you don't want to commit migrations:
+# **/Migrations/
+
+# Published output
+publish/
+**/publish/
+*.pubxml
+*.pubxml.user
+
+# Test results
+TestResults/
+
+# ============================================================
+#  Node.js / React / Vite
+# ============================================================
+node_modules/
+dist/
+dist-ssr/
+*.local
+
+# Vite cache
+.vite/
+
+# Environment files with secrets
+.env
+.env.local
+.env.*.local
+
+# ============================================================
+#  Uploaded files (user content — not source code)
+# ============================================================
+**/wwwroot/uploads/
+
+# ============================================================
+#  IDEs & editors
+# ============================================================
+# Visual Studio
+.vs/
+*.rsuser
+
+# VS Code
+.vscode/
+!.vscode/extensions.json
+
+# JetBrains (Rider, WebStorm)
+.idea/
+*.iml
+
+# ============================================================
+#  OS
+# ============================================================
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# ============================================================
+#  Logs
+# ============================================================
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*

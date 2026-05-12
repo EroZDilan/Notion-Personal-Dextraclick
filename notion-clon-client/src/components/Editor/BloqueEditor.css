@@ -1,0 +1,224 @@
+.bloque-wrapper {
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+  margin: 2px 0;
+  group: bloque;
+  position: relative;
+}
+
+.bloque-handle {
+  opacity: 0;
+  cursor: grab;
+  color: var(--text-muted);
+  font-size: 1rem;
+  padding: 4px 2px;
+  flex-shrink: 0;
+  line-height: 1.5;
+  user-select: none;
+  transition: opacity 0.1s;
+}
+
+.bloque-wrapper:hover .bloque-handle {
+  opacity: 1;
+}
+
+.bloque-handle:active {
+  cursor: grabbing;
+}
+
+.bloque-contenido {
+  flex: 1;
+  min-width: 0;
+}
+
+.bloque-eliminar {
+  opacity: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  padding: 4px;
+  border-radius: 3px;
+  flex-shrink: 0;
+  transition: opacity 0.1s;
+  line-height: 1.5;
+}
+
+.bloque-wrapper:hover .bloque-eliminar {
+  opacity: 1;
+}
+
+.bloque-eliminar:hover {
+  background: var(--hover);
+  color: var(--text);
+}
+
+/* TipTap text */
+.bloque-texto .ProseMirror {
+  outline: none;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--text);
+  padding: 2px 0;
+}
+
+.bloque-texto .ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  color: var(--text-muted);
+  pointer-events: none;
+  float: left;
+  height: 0;
+}
+
+.bloque-texto .ProseMirror h1 { font-size: 1.875rem; font-weight: 700; margin: 8px 0 4px; }
+.bloque-texto .ProseMirror h2 { font-size: 1.5rem; font-weight: 600; margin: 6px 0 4px; }
+.bloque-texto .ProseMirror h3 { font-size: 1.25rem; font-weight: 600; margin: 4px 0 2px; }
+.bloque-texto .ProseMirror ul, .bloque-texto .ProseMirror ol { padding-left: 1.5rem; }
+.bloque-texto .ProseMirror li { margin: 2px 0; }
+.bloque-texto .ProseMirror blockquote {
+  border-left: 3px solid var(--border);
+  margin: 0;
+  padding-left: 1rem;
+  color: var(--text-muted);
+}
+
+/* Divisor */
+.bloque-divisor {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 12px 0;
+}
+
+/* Código */
+.bloque-codigo {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+  font-family: 'Fira Code', 'Courier New', monospace;
+}
+
+.bloque-codigo-header {
+  background: var(--sidebar-bg);
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.bloque-codigo-header select {
+  background: none;
+  border: none;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  outline: none;
+}
+
+.bloque-codigo-textarea {
+  width: 100%;
+  padding: 12px 14px;
+  font-family: inherit;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  border: none;
+  outline: none;
+  background: var(--code-bg);
+  color: var(--code-text);
+  resize: none;
+  tab-size: 2;
+}
+
+/* Llamada */
+.bloque-llamada {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 6px;
+}
+
+.bloque-llamada-emoji {
+  width: 32px;
+  border: none;
+  background: none;
+  font-size: 1.25rem;
+  text-align: center;
+  outline: none;
+  flex-shrink: 0;
+}
+
+.bloque-llamada-texto {
+  flex: 1;
+  border: none;
+  background: none;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  outline: none;
+  resize: none;
+  font-family: var(--font);
+}
+
+.bloque-llamada-color {
+  border: none;
+  background: none;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  outline: none;
+  flex-shrink: 0;
+}
+
+/* Imagen */
+.bloque-imagen-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed var(--border);
+  border-radius: 6px;
+  padding: 32px;
+  cursor: pointer;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  transition: border-color 0.15s;
+}
+
+.bloque-imagen-placeholder:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.bloque-imagen-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.bloque-imagen {
+  max-width: 100%;
+  border-radius: 6px;
+}
+
+.bloque-imagen-alt {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  border: none;
+  outline: none;
+  background: none;
+  text-align: center;
+  font-style: italic;
+}
+
+.bloque-imagen-cambiar {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 4px 10px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  align-self: flex-start;
+  color: var(--text-muted);
+}
+
+.bloque-imagen-cambiar:hover {
+  background: var(--hover);
+}

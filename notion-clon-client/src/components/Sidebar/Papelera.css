@@ -1,0 +1,90 @@
+.papelera {
+  border-top: 1px solid var(--border);
+  padding: 4px 0;
+}
+
+.papelera-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 7px 14px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: background 0.1s;
+  border-radius: 4px;
+  margin: 0 4px;
+  width: calc(100% - 8px);
+}
+
+.papelera-toggle:hover {
+  background: var(--hover);
+  color: var(--text);
+}
+
+.papelera-chevron {
+  font-size: 0.65rem;
+}
+
+.papelera-lista {
+  padding: 2px 8px 6px;
+}
+
+.papelera-vacio {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  text-align: center;
+  padding: 8px 0;
+}
+
+.papelera-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 6px;
+  border-radius: 4px;
+  transition: background 0.1s;
+}
+
+.papelera-item:hover {
+  background: var(--hover);
+}
+
+.papelera-titulo {
+  flex: 1;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.papelera-titulo:hover {
+  color: var(--text);
+}
+
+.papelera-restaurar {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  padding: 2px 4px;
+  border-radius: 3px;
+  flex-shrink: 0;
+  opacity: 0;
+  transition: opacity 0.1s;
+}
+
+.papelera-item:hover .papelera-restaurar {
+  opacity: 1;
+}
+
+.papelera-restaurar:hover {
+  background: var(--hover);
+  color: var(--accent);
+}

@@ -1,0 +1,39 @@
+.bubble-menu {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  padding: 4px 6px;
+}
+
+.bubble-menu button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 7px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  color: var(--text);
+  line-height: 1;
+  transition: background 0.1s;
+  min-width: 28px;
+}
+
+.bubble-menu button:hover {
+  background: var(--hover);
+}
+
+.bubble-menu button.active {
+  background: var(--accent);
+  color: white;
+}
+
+.bubble-sep {
+  width: 1px;
+  height: 18px;
+  background: var(--border);
+  margin: 0 3px;
+}

@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotionClon.Core", "NotionClon.Core\NotionClon.Core.csproj", "{43A12F6B-3C6E-437F-9B7E-4C0F8A0C091E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotionClon.Infrastructure", "NotionClon.Infrastructure\NotionClon.Infrastructure.csproj", "{0B31B7C7-7D94-45EC-A351-AD3B7F9D0AB6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotionClon.API", "NotionClon.API\NotionClon.API.csproj", "{303C4B41-ED42-4C54-93F5-0AC0659667E6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{43A12F6B-3C6E-437F-9B7E-4C0F8A0C091E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{43A12F6B-3C6E-437F-9B7E-4C0F8A0C091E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{43A12F6B-3C6E-437F-9B7E-4C0F8A0C091E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{43A12F6B-3C6E-437F-9B7E-4C0F8A0C091E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0B31B7C7-7D94-45EC-A351-AD3B7F9D0AB6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0B31B7C7-7D94-45EC-A351-AD3B7F9D0AB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0B31B7C7-7D94-45EC-A351-AD3B7F9D0AB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0B31B7C7-7D94-45EC-A351-AD3B7F9D0AB6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{303C4B41-ED42-4C54-93F5-0AC0659667E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{303C4B41-ED42-4C54-93F5-0AC0659667E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{303C4B41-ED42-4C54-93F5-0AC0659667E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{303C4B41-ED42-4C54-93F5-0AC0659667E6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
