@@ -37,21 +37,21 @@ public class PaginaService : IPaginaService
             .FirstOrDefaultAsync(p => p.Id == id && p.UsuarioId == usuarioId && !p.Archivada)
             ?? throw new KeyNotFoundException("Página no encontrada");
 
-        return new PaginaConBloquesDto
-        {
-            Id = pagina.Id,
-            Titulo = pagina.Titulo,
-            Emoji = pagina.Emoji,
-            PaginaPadreId = pagina.PaginaPadreId,
-            Bloques = pagina.Bloques.Select(b => new BloqueDto
-            {
-                Id = b.Id,
-                Tipo = b.Tipo.ToString(),
-                Contenido = JsonSerializer.Deserialize<object>(b.ContenidoJson)!,
-                Orden = b.Orden
-            }).ToList(),
-            SubPaginas = pagina.SubPaginas.Select(MapearDto).ToList()
-        };
+        return await MapearConBloquesAsync(pagina);
+    }
+
+    public async Task<PaginaConBloquesDto> ObtenerPublicaAsync(Guid id)
+    {
+        var pagina = await _context.Paginas
+            .Include(p => p.Bloques.OrderBy(b => b.Orden))
+            .Include(p => p.SubPaginas.Where(s => !s.Archivada))
+            .FirstOrDefaultAsync(p => p.Id == id && !p.Archivada)
+            ?? throw new KeyNotFoundException("Página no encontrada");
+
+        if (!pagina.EsPublica)
+            throw new UnauthorizedAccessException("Página no pública");
+
+        return await MapearConBloquesAsync(pagina);
     }
 
     public async Task<PaginaDto> CrearAsync(string usuarioId, Guid? padreId = null)
@@ -83,6 +83,28 @@ public class PaginaService : IPaginaService
         pagina.Titulo = dto.Titulo;
         if (!string.IsNullOrWhiteSpace(dto.Emoji))
             pagina.Emoji = dto.Emoji;
+        pagina.ActualizadaEn = DateTime.UtcNow;
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task ActualizarCoverAsync(Guid id, string? coverUrl, string usuarioId)
+    {
+        var pagina = await _context.Paginas
+            .FirstOrDefaultAsync(p => p.Id == id && p.UsuarioId == usuarioId)
+            ?? throw new KeyNotFoundException("Página no encontrada");
+
+        pagina.CoverUrl = coverUrl;
+        pagina.ActualizadaEn = DateTime.UtcNow;
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task ActualizarVisibilidadAsync(Guid id, bool esPublica, string usuarioId)
+    {
+        var pagina = await _context.Paginas
+            .FirstOrDefaultAsync(p => p.Id == id && p.UsuarioId == usuarioId)
+            ?? throw new KeyNotFoundException("Página no encontrada");
+
+        pagina.EsPublica = esPublica;
         pagina.ActualizadaEn = DateTime.UtcNow;
         await _context.SaveChangesAsync();
     }
@@ -121,6 +143,8 @@ public class PaginaService : IPaginaService
             Id = p.Id,
             Titulo = p.Titulo,
             Emoji = p.Emoji,
+            CoverUrl = p.CoverUrl,
+            EsPublica = p.EsPublica,
             PaginaPadreId = p.PaginaPadreId,
             ActualizadaEn = p.ActualizadaEn
         }).ToList();
@@ -134,7 +158,6 @@ public class PaginaService : IPaginaService
         var q = query.ToLower();
         var resultados = new List<ResultadoBusquedaDto>();
 
-        // Buscar en títulos
         var porTitulo = await _context.Paginas
             .Where(p => p.UsuarioId == usuarioId && !p.Archivada && p.Titulo.ToLower().Contains(q))
             .Take(5)
@@ -148,7 +171,6 @@ public class PaginaService : IPaginaService
             Tipo = "pagina"
         }));
 
-        // Buscar en contenido de bloques
         var porContenido = await _context.Bloques
             .Include(b => b.Pagina)
             .Where(b => b.Pagina.UsuarioId == usuarioId && !b.Pagina.Archivada
@@ -183,6 +205,35 @@ public class PaginaService : IPaginaService
         return resultados.Take(10).ToList();
     }
 
+    private async Task<PaginaConBloquesDto> MapearConBloquesAsync(Pagina pagina)
+    {
+        var bloqueIds = pagina.Bloques.Select(b => b.Id).ToList();
+        var comentariosCount = await _context.Comentarios
+            .Where(c => bloqueIds.Contains(c.BloqueId))
+            .GroupBy(c => c.BloqueId)
+            .Select(g => new { BloqueId = g.Key, Count = g.Count() })
+            .ToDictionaryAsync(x => x.BloqueId, x => x.Count);
+
+        return new PaginaConBloquesDto
+        {
+            Id = pagina.Id,
+            Titulo = pagina.Titulo,
+            Emoji = pagina.Emoji,
+            CoverUrl = pagina.CoverUrl,
+            EsPublica = pagina.EsPublica,
+            PaginaPadreId = pagina.PaginaPadreId,
+            Bloques = pagina.Bloques.Select(b => new BloqueDto
+            {
+                Id = b.Id,
+                Tipo = b.Tipo.ToString(),
+                Contenido = JsonSerializer.Deserialize<object>(b.ContenidoJson)!,
+                Orden = b.Orden,
+                TotalComentarios = comentariosCount.GetValueOrDefault(b.Id, 0)
+            }).ToList(),
+            SubPaginas = pagina.SubPaginas.Select(MapearDto).ToList()
+        };
+    }
+
     private static string ExtraerTexto(string json)
     {
         try
@@ -202,6 +253,8 @@ public class PaginaService : IPaginaService
         Id = p.Id,
         Titulo = p.Titulo,
         Emoji = p.Emoji,
+        CoverUrl = p.CoverUrl,
+        EsPublica = p.EsPublica,
         PaginaPadreId = p.PaginaPadreId,
         ActualizadaEn = p.ActualizadaEn,
         SubPaginas = p.SubPaginas.Where(s => !s.Archivada).Select(MapearDto).ToList()

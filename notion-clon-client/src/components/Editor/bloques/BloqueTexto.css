@@ -37,3 +37,51 @@
   background: var(--border);
   margin: 0 3px;
 }
+
+/* Page mention */
+.page-mention {
+  color: var(--accent);
+  background: rgba(35, 131, 226, 0.08);
+  border-radius: 3px;
+  padding: 1px 4px;
+  text-decoration: none;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.page-mention:hover {
+  background: rgba(35, 131, 226, 0.15);
+}
+
+.mention-dropdown {
+  position: fixed;
+  z-index: 500;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+  padding: 4px;
+  min-width: 200px;
+  max-width: 280px;
+}
+
+.mention-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  padding: 6px 10px;
+  font-size: 0.875rem;
+  cursor: pointer;
+  border-radius: 5px;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mention-item:hover,
+.mention-item-selected {
+  background: var(--hover);
+}

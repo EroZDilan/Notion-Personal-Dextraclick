@@ -1,0 +1,144 @@
+.pub-page {
+  min-height: 100vh;
+  background: #fff;
+  color: #37352f;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+}
+
+.pub-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 24px;
+  border-bottom: 1px solid #e5e5e5;
+  position: sticky;
+  top: 0;
+  background: rgba(255,255,255,0.9);
+  backdrop-filter: blur(8px);
+  z-index: 10;
+}
+
+.pub-brand {
+  font-weight: 700;
+  font-size: 1rem;
+  color: #37352f;
+}
+
+.pub-login-link {
+  font-size: 0.85rem;
+  color: #2383e2;
+  text-decoration: none;
+  padding: 6px 14px;
+  border: 1px solid #2383e2;
+  border-radius: 6px;
+  transition: background 0.15s;
+}
+
+.pub-login-link:hover {
+  background: #2383e210;
+}
+
+.pub-cover {
+  width: 100%;
+  height: 220px;
+  overflow: hidden;
+}
+
+.pub-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.pub-article {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 48px 96px 80px;
+}
+
+.pub-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+
+.pub-emoji {
+  font-size: 2.5rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.pub-titulo {
+  font-size: 2.5rem;
+  font-weight: 700;
+  line-height: 1.2;
+  color: #37352f;
+  margin: 0;
+}
+
+.pub-contenido {
+  line-height: 1.65;
+  color: #37352f;
+}
+
+.pub-texto { margin: 3px 0; font-size: 1rem; }
+.pub-texto p { margin: 0; }
+.pub-heading1 { font-size: 1.875rem; font-weight: 700; margin: 12px 0 4px; }
+.pub-heading2 { font-size: 1.5rem; font-weight: 600; margin: 10px 0 4px; }
+.pub-heading3 { font-size: 1.25rem; font-weight: 600; margin: 8px 0 4px; }
+
+.pub-lista { padding-left: 1.5rem; margin: 4px 0; }
+.pub-lista li { margin: 2px 0; }
+
+.pub-divisor {
+  border: none;
+  border-top: 1px solid #e5e5e5;
+  margin: 16px 0;
+}
+
+.pub-imagen { margin: 12px 0; text-align: center; }
+.pub-imagen img { max-width: 100%; border-radius: 6px; }
+.pub-imagen figcaption { font-size: 0.8rem; color: #9b9b9b; margin-top: 4px; }
+
+.pub-codigo {
+  background: #f7f7f5;
+  border-radius: 6px;
+  padding: 14px 16px;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.875rem;
+  overflow-x: auto;
+  margin: 8px 0;
+}
+
+.pub-llamada {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 6px;
+  margin: 6px 0;
+}
+
+.pub-llamada-amarillo { background: #fef9c3; }
+.pub-llamada-azul { background: #dbeafe; }
+.pub-llamada-verde { background: #dcfce7; }
+.pub-llamada-rojo { background: #fee2e2; }
+.pub-llamada-gris { background: #f3f4f6; }
+
+.pub-error, .pub-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  gap: 12px;
+  color: #37352f;
+}
+
+.pub-error a { color: #2383e2; }
+
+@media (max-width: 768px) {
+  .pub-article { padding: 32px 20px; }
+  .pub-titulo { font-size: 1.75rem; }
+}

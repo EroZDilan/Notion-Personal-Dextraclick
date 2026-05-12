@@ -47,7 +47,8 @@ public class BloqueService : IBloqueService
             Id = nuevo.Id,
             Tipo = nuevo.Tipo.ToString(),
             Contenido = System.Text.Json.JsonSerializer.Deserialize<object>(nuevo.ContenidoJson)!,
-            Orden = nuevo.Orden
+            Orden = nuevo.Orden,
+            TotalComentarios = 0
         };
     }
 
@@ -57,6 +58,24 @@ public class BloqueService : IBloqueService
             .Include(b => b.Pagina)
             .FirstOrDefaultAsync(b => b.Id == bloqueId && b.Pagina.UsuarioId == usuarioId)
             ?? throw new KeyNotFoundException("Bloque no encontrado");
+
+        // Guardar versión anterior (máx 20 por bloque)
+        var totalVersiones = await _context.VersionesBloque.CountAsync(v => v.BloqueId == bloqueId);
+        if (totalVersiones >= 20)
+        {
+            var masAntigua = await _context.VersionesBloque
+                .Where(v => v.BloqueId == bloqueId)
+                .OrderBy(v => v.CreadaEn)
+                .FirstAsync();
+            _context.VersionesBloque.Remove(masAntigua);
+        }
+
+        _context.VersionesBloque.Add(new VersionBloque
+        {
+            BloqueId = bloqueId,
+            ContenidoJson = bloque.ContenidoJson,
+            TipoStr = bloque.Tipo.ToString()
+        });
 
         bloque.ContenidoJson = System.Text.Json.JsonSerializer.Serialize(contenido);
         bloque.ActualizadoEn = DateTime.UtcNow;
@@ -92,6 +111,50 @@ public class BloqueService : IBloqueService
 
         _context.Bloques.Remove(bloque);
         bloque.Pagina.ActualizadaEn = DateTime.UtcNow;
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task<List<VersionBloqueDto>> ObtenerVersionesAsync(Guid bloqueId, string usuarioId)
+    {
+        var existe = await _context.Bloques
+            .AnyAsync(b => b.Id == bloqueId && b.Pagina.UsuarioId == usuarioId);
+
+        if (!existe) throw new KeyNotFoundException("Bloque no encontrado");
+
+        return await _context.VersionesBloque
+            .Where(v => v.BloqueId == bloqueId)
+            .OrderByDescending(v => v.CreadaEn)
+            .Select(v => new VersionBloqueDto
+            {
+                Id = v.Id,
+                ContenidoJson = v.ContenidoJson,
+                TipoStr = v.TipoStr,
+                CreadaEn = v.CreadaEn
+            })
+            .ToListAsync();
+    }
+
+    public async Task RestaurarVersionAsync(Guid versionId, string usuarioId)
+    {
+        var version = await _context.VersionesBloque
+            .Include(v => v.Bloque).ThenInclude(b => b.Pagina)
+            .FirstOrDefaultAsync(v => v.Id == versionId && v.Bloque.Pagina.UsuarioId == usuarioId)
+            ?? throw new KeyNotFoundException("Versión no encontrada");
+
+        var bloque = version.Bloque;
+
+        // Guardar estado actual como nueva versión antes de restaurar
+        _context.VersionesBloque.Add(new VersionBloque
+        {
+            BloqueId = bloque.Id,
+            ContenidoJson = bloque.ContenidoJson,
+            TipoStr = bloque.Tipo.ToString()
+        });
+
+        bloque.ContenidoJson = version.ContenidoJson;
+        bloque.ActualizadoEn = DateTime.UtcNow;
+        bloque.Pagina.ActualizadaEn = DateTime.UtcNow;
+
         await _context.SaveChangesAsync();
     }
 

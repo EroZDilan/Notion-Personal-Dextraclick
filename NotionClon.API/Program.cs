@@ -50,6 +50,7 @@ builder.Services.AddAuthentication(options =>
 // Services
 builder.Services.AddScoped<IPaginaService, PaginaService>();
 builder.Services.AddScoped<IBloqueService, BloqueService>();
+builder.Services.AddScoped<IComentarioService, ComentarioService>();
 builder.Services.AddScoped<ImagenService>();
 
 // CORS

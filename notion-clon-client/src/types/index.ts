@@ -2,6 +2,8 @@ export interface PaginaDto {
   id: string
   titulo: string
   emoji: string
+  coverUrl?: string | null
+  esPublica: boolean
   paginaPadreId: string | null
   subPaginas: PaginaDto[]
   actualizadaEn?: string
@@ -12,6 +14,7 @@ export interface BloqueDto {
   tipo: TipoBloque
   contenido: Record<string, unknown>
   orden: number
+  totalComentarios: number
 }
 
 export interface PaginaConBloquesDto extends PaginaDto {
@@ -43,4 +46,20 @@ export interface ResultadoBusquedaDto {
   emoji: string
   fragmento?: string
   tipo: 'pagina' | 'bloque'
+}
+
+export interface VersionBloqueDto {
+  id: string
+  contenidoJson: string
+  tipoStr: string
+  creadaEn: string
+}
+
+export interface ComentarioDto {
+  id: string
+  bloqueId: string
+  usuarioId: string
+  nombreUsuario: string
+  texto: string
+  creadaEn: string
 }

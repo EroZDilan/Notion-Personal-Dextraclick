@@ -9,4 +9,6 @@ public class Bloque
     public string ContenidoJson { get; set; } = "{}";
     public int Orden { get; set; }
     public DateTime ActualizadoEn { get; set; } = DateTime.UtcNow;
+    public ICollection<VersionBloque> Versiones { get; set; } = new List<VersionBloque>();
+    public ICollection<Comentario> Comentarios { get; set; } = new List<Comentario>();
 }

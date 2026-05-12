@@ -11,6 +11,8 @@ public class AppDbContext : IdentityDbContext<IdentityUser>
 
     public DbSet<Pagina> Paginas => Set<Pagina>();
     public DbSet<Bloque> Bloques => Set<Bloque>();
+    public DbSet<VersionBloque> VersionesBloque => Set<VersionBloque>();
+    public DbSet<Comentario> Comentarios => Set<Comentario>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -40,6 +42,30 @@ public class AppDbContext : IdentityDbContext<IdentityUser>
         {
             e.HasKey(b => b.Id);
             e.Property(b => b.ContenidoJson).HasColumnType("TEXT");
+
+            e.HasMany(b => b.Versiones)
+                .WithOne(v => v.Bloque)
+                .HasForeignKey(v => v.BloqueId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            e.HasMany(b => b.Comentarios)
+                .WithOne(c => c.Bloque)
+                .HasForeignKey(c => c.BloqueId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        builder.Entity<VersionBloque>(e =>
+        {
+            e.HasKey(v => v.Id);
+            e.Property(v => v.ContenidoJson).HasColumnType("TEXT");
+            e.HasIndex(v => v.BloqueId);
+        });
+
+        builder.Entity<Comentario>(e =>
+        {
+            e.HasKey(c => c.Id);
+            e.Property(c => c.Texto).HasMaxLength(2000);
+            e.HasIndex(c => c.BloqueId);
         });
     }
 }

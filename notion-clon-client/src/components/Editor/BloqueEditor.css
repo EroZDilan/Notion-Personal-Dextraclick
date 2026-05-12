@@ -3,7 +3,6 @@
   align-items: flex-start;
   gap: 4px;
   margin: 2px 0;
-  group: bloque;
   position: relative;
 }
 
@@ -32,8 +31,50 @@
   min-width: 0;
 }
 
-.bloque-eliminar {
+.bloque-acciones {
+  display: flex;
+  align-items: center;
+  gap: 2px;
   opacity: 0;
+  transition: opacity 0.1s;
+  flex-shrink: 0;
+}
+
+.bloque-wrapper:hover .bloque-acciones {
+  opacity: 1;
+}
+
+.bloque-accion-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  padding: 3px 4px;
+  border-radius: 3px;
+  line-height: 1.5;
+  position: relative;
+  transition: background 0.1s;
+}
+
+.bloque-accion-btn:hover {
+  background: var(--hover);
+  color: var(--text);
+}
+
+.bloque-badge {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 0.55rem;
+  border-radius: 999px;
+  padding: 1px 4px;
+  line-height: 1;
+}
+
+.bloque-eliminar {
   background: none;
   border: none;
   cursor: pointer;
@@ -42,12 +83,7 @@
   padding: 4px;
   border-radius: 3px;
   flex-shrink: 0;
-  transition: opacity 0.1s;
   line-height: 1.5;
-}
-
-.bloque-wrapper:hover .bloque-eliminar {
-  opacity: 1;
 }
 
 .bloque-eliminar:hover {

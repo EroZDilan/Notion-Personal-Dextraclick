@@ -8,11 +8,20 @@ export const paginasApi = {
   obtener: (id: string) =>
     api.get<PaginaConBloquesDto>(`/paginas/${id}`).then((r) => r.data),
 
+  obtenerPublica: (id: string) =>
+    api.get<PaginaConBloquesDto>(`/publico/paginas/${id}`).then((r) => r.data),
+
   crear: (padreId?: string) =>
     api.post<PaginaDto>('/paginas', { padreId }).then((r) => r.data),
 
   actualizarTitulo: (id: string, titulo: string, emoji: string) =>
     api.patch(`/paginas/${id}`, { titulo, emoji }),
+
+  actualizarCover: (id: string, coverUrl: string | null) =>
+    api.patch(`/paginas/${id}/cover`, { coverUrl }),
+
+  actualizarVisibilidad: (id: string, esPublica: boolean) =>
+    api.patch(`/paginas/${id}/visibilidad`, { esPublica }),
 
   archivar: (id: string) => api.delete(`/paginas/${id}`),
 

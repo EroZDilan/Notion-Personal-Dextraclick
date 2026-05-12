@@ -1,5 +1,5 @@
 import { api } from './client'
-import type { BloqueDto, TipoBloque } from '../types'
+import type { BloqueDto, TipoBloque, VersionBloqueDto } from '../types'
 
 export const bloquesApi = {
   crear: (paginaId: string, tipo: TipoBloque, orden: number) =>
@@ -12,4 +12,10 @@ export const bloquesApi = {
     api.put(`/bloques/reordenar/${paginaId}`, { ordenIds }),
 
   eliminar: (id: string) => api.delete(`/bloques/${id}`),
+
+  obtenerVersiones: (bloqueId: string) =>
+    api.get<VersionBloqueDto[]>(`/versiones/bloque/${bloqueId}`).then((r) => r.data),
+
+  restaurarVersion: (versionId: string) =>
+    api.post(`/versiones/${versionId}/restaurar`),
 }

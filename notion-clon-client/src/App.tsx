@@ -4,6 +4,7 @@ import { ThemeProvider } from './contexts/ThemeContext'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import Workspace from './pages/Workspace'
+import PaginaPublica from './pages/PaginaPublica'
 import './index.css'
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
@@ -17,6 +18,7 @@ function AppRoutes() {
     <Routes>
       <Route path="/login" element={isAuthenticated ? <Navigate to="/" replace /> : <Login />} />
       <Route path="/register" element={isAuthenticated ? <Navigate to="/" replace /> : <Register />} />
+      <Route path="/p/:id" element={<PaginaPublica />} />
       <Route path="/*" element={<PrivateRoute><Workspace /></PrivateRoute>} />
     </Routes>
   )

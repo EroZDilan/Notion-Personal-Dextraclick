@@ -79,6 +79,34 @@ public class PaginasController : ControllerBase
         }
     }
 
+    [HttpPatch("{id:guid}/cover")]
+    public async Task<IActionResult> ActualizarCover(Guid id, [FromBody] ActualizarCoverDto dto)
+    {
+        try
+        {
+            await _paginaService.ActualizarCoverAsync(id, dto.CoverUrl, UsuarioId);
+            return NoContent();
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound();
+        }
+    }
+
+    [HttpPatch("{id:guid}/visibilidad")]
+    public async Task<IActionResult> ActualizarVisibilidad(Guid id, [FromBody] ActualizarVisibilidadDto dto)
+    {
+        try
+        {
+            await _paginaService.ActualizarVisibilidadAsync(id, dto.EsPublica, UsuarioId);
+            return NoContent();
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound();
+        }
+    }
+
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Archivar(Guid id)
     {

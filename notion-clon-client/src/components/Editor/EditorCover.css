@@ -1,0 +1,61 @@
+.editor-cover {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.editor-cover-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.editor-cover-actions {
+  position: absolute;
+  bottom: 10px;
+  right: 14px;
+  display: none;
+  gap: 6px;
+}
+
+.editor-cover:hover .editor-cover-actions {
+  display: flex;
+}
+
+.editor-cover-actions button {
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 4px 10px;
+  font-size: 0.78rem;
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+}
+
+.editor-cover-actions button:hover {
+  background: rgba(0, 0, 0, 0.75);
+}
+
+.editor-cover-placeholder {
+  padding: 8px 0 0;
+}
+
+.editor-cover-add {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background 0.1s;
+}
+
+.editor-cover-add:hover {
+  background: var(--hover);
+  color: var(--text);
+}

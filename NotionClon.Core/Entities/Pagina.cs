@@ -5,6 +5,8 @@ public class Pagina
     public Guid Id { get; set; } = Guid.NewGuid();
     public string Titulo { get; set; } = "Sin título";
     public string Emoji { get; set; } = "📄";
+    public string? CoverUrl { get; set; }
+    public bool EsPublica { get; set; }
     public string UsuarioId { get; set; } = string.Empty;
     public Guid? PaginaPadreId { get; set; }
     public Pagina? PaginaPadre { get; set; }
