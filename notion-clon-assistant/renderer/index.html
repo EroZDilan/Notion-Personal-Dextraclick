@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src http://localhost:5162">
+  <title>NotionClon Asistente</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- LOGIN -->
+  <div id="login-screen" class="screen">
+    <div class="login-header">
+      <span class="logo">✦</span>
+      <h1>NotionClon<br><span>Asistente IA</span></h1>
+    </div>
+    <form id="login-form">
+      <input type="email" id="email" placeholder="Correo electrónico" required autocomplete="email">
+      <input type="password" id="password" placeholder="Contraseña" required autocomplete="current-password">
+      <button type="submit" id="login-btn">Entrar</button>
+      <p id="login-error" class="error hidden"></p>
+    </form>
+  </div>
+
+  <!-- CHAT -->
+  <div id="chat-screen" class="screen hidden">
+    <div class="chat-header">
+      <div class="header-left">
+        <span class="logo-small">✦</span>
+        <span class="header-title">Asistente IA</span>
+      </div>
+      <div class="header-right">
+        <span id="status-dot" class="status-dot offline" title="Estado del backend"></span>
+        <button id="logout-btn" class="icon-btn" title="Cerrar sesión">↩</button>
+        <button id="close-btn" class="icon-btn" title="Minimizar">−</button>
+      </div>
+    </div>
+
+    <div id="messages" class="messages">
+      <div class="msg bot">
+        <div class="bubble">Hola! Soy tu asistente de NotionClon. Puedo crear páginas, editar bloques, buscar contenido y más. ¿En qué te ayudo?</div>
+      </div>
+    </div>
+
+    <div id="pending-action" class="pending-action hidden">
+      <p id="pending-desc"></p>
+      <div class="pending-buttons">
+        <button id="confirm-btn" class="btn-confirm">Confirmar</button>
+        <button id="cancel-btn" class="btn-cancel">Cancelar</button>
+      </div>
+    </div>
+
+    <form id="chat-form" class="chat-input">
+      <input type="text" id="message-input" placeholder="Escribe un comando..." autocomplete="off">
+      <button type="submit" id="send-btn">↑</button>
+    </form>
+  </div>
+
+  <script src="renderer.js"></script>
+</body>
+</html>

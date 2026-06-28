@@ -12,7 +12,6 @@
 project.lock.json
 project.fragment.lock.json
 .vs/
-launchSettings.json
 
 # Secrets & local config
 appsettings.Development.json

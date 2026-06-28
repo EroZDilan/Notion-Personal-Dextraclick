@@ -52,6 +52,8 @@ builder.Services.AddScoped<IPaginaService, PaginaService>();
 builder.Services.AddScoped<IBloqueService, BloqueService>();
 builder.Services.AddScoped<IComentarioService, ComentarioService>();
 builder.Services.AddScoped<ImagenService>();
+builder.Services.AddScoped<IChatService, ChatService>();
+builder.Services.AddHttpClient<ChatService>();
 
 // CORS
 var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()!;
@@ -59,6 +61,12 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("FrontendPolicy", policy =>
         policy.WithOrigins(allowedOrigins)
+              .AllowAnyHeader()
+              .AllowAnyMethod());
+
+    // Permite requests desde la app Electron (origin null o file://)
+    options.AddPolicy("ElectronPolicy", policy =>
+        policy.AllowAnyOrigin()
               .AllowAnyHeader()
               .AllowAnyMethod());
 });
@@ -100,7 +108,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseStaticFiles();
 app.UseHttpsRedirection();
-app.UseCors("FrontendPolicy");
+app.UseCors("ElectronPolicy");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

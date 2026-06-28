@@ -1,0 +1,15 @@
+{
+  "name": "notion-clon-assistant",
+  "version": "1.0.0",
+  "description": "Asistente IA para NotionClon",
+  "main": "main.js",
+  "scripts": {
+    "start": "env -u ELECTRON_RUN_AS_NODE ELECTRON_OZONE_PLATFORM_HINT=auto electron . --no-sandbox"
+  },
+  "dependencies": {
+    "electron": "^33.0.0"
+  },
+  "allowScripts": {
+    "electron@33.4.11": true
+  }
+}
