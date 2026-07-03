@@ -2,12 +2,21 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src http://localhost:5162">
   <title>NotionClon Asistente</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+  <!-- PANEL DE SESIONES (overlay) -->
+  <div id="sessions-panel" class="hidden">
+    <div class="sessions-header">
+      <span class="sessions-title">Conversaciones</span>
+      <button id="new-session-btn" class="btn-new-session">+ Nueva</button>
+      <button id="close-sessions-btn" class="icon-btn">✕</button>
+    </div>
+    <div id="sessions-list"></div>
+  </div>
 
   <!-- LOGIN -->
   <div id="login-screen" class="screen">
@@ -25,11 +34,10 @@
 
   <!-- CHAT -->
   <div id="chat-screen" class="screen hidden">
+
     <div class="chat-header">
-      <div class="header-left">
-        <span class="logo-small">✦</span>
-        <span class="header-title">Asistente IA</span>
-      </div>
+      <button id="sessions-btn" class="icon-btn sessions-toggle" title="Conversaciones">☰</button>
+      <span id="session-name-display" class="session-name-header">Nueva conversación</span>
       <div class="header-right">
         <span id="status-dot" class="status-dot offline" title="Estado del backend"></span>
         <button id="logout-btn" class="icon-btn" title="Cerrar sesión">↩</button>
@@ -37,24 +45,27 @@
       </div>
     </div>
 
-    <div id="messages" class="messages">
-      <div class="msg bot">
-        <div class="bubble">Hola! Soy tu asistente de NotionClon. Puedo crear páginas, editar bloques, buscar contenido y más. ¿En qué te ayudo?</div>
-      </div>
-    </div>
+    <div id="messages" class="messages"></div>
 
     <div id="pending-action" class="pending-action hidden">
       <p id="pending-desc"></p>
       <div class="pending-buttons">
-        <button id="confirm-btn" class="btn-confirm">Confirmar</button>
-        <button id="cancel-btn" class="btn-cancel">Cancelar</button>
+        <button id="confirm-btn" class="btn-confirm">✓ Confirmar</button>
+        <button id="cancel-btn" class="btn-cancel">✕ Cancelar</button>
       </div>
     </div>
 
+    <div id="context-badge" class="context-badge hidden">
+      <span>📎 Historial adjunto</span>
+      <button id="remove-context-btn" class="remove-ctx-btn">✕</button>
+    </div>
+
     <form id="chat-form" class="chat-input">
-      <input type="text" id="message-input" placeholder="Escribe un comando..." autocomplete="off">
+      <button type="button" id="context-btn" class="ctx-btn" title="Adjuntar historial como contexto">📎</button>
+      <input type="text" id="message-input" placeholder="Escribe un mensaje..." autocomplete="off">
       <button type="submit" id="send-btn">↑</button>
     </form>
+
   </div>
 
   <script src="renderer.js"></script>

@@ -4,6 +4,7 @@ public class ChatRequestDto
 {
     public string Mensaje { get; set; } = string.Empty;
     public AccionPendienteDto? ConfirmarAccionPendiente { get; set; }
+    public string? ContextoConversacion { get; set; }
 }
 
 public class ChatResponseDto

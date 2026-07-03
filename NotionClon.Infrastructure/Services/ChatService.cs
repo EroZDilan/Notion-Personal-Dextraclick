@@ -30,6 +30,15 @@ public class ChatService : IChatService
         var arbol = await _paginas.ObtenerArbolAsync(usuarioId);
         var arbolTexto = SerializarArbol(arbol, 0);
 
+        var contextoSection = string.IsNullOrWhiteSpace(request.ContextoConversacion)
+            ? ""
+            : $"""
+
+
+            CONTEXTO DE CONVERSACIÓN PREVIA (usa solo si es relevante):
+            {request.ContextoConversacion}
+            """;
+
         var systemPrompt = $"""
             Eres el asistente inteligente de NotionClon, una app de notas al estilo Notion.
             Controlas completamente el espacio de notas del usuario.
@@ -37,7 +46,7 @@ public class ChatService : IChatService
             Cuando ejecutes acciones, confirma brevemente lo que hiciste.
 
             ÁRBOL DE PÁGINAS ACTUAL:
-            {(string.IsNullOrWhiteSpace(arbolTexto) ? "(sin páginas aún)" : arbolTexto)}
+            {(string.IsNullOrWhiteSpace(arbolTexto) ? "(sin páginas aún)" : arbolTexto)}{contextoSection}
 
             Para leer el contenido de una página, usa get_page_content con su ID.
             Para crear bloques, primero obtén el ID de la página con get_page_content.

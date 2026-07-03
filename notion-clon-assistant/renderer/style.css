@@ -2,6 +2,7 @@
   --bg: #191919;
   --surface: #222222;
   --surface2: #2a2a2a;
+  --surface3: #313131;
   --border: #333333;
   --text: #e8e8e8;
   --text-muted: #888888;
@@ -29,10 +30,136 @@ body {
   -webkit-app-region: no-drag;
   border-radius: var(--radius);
   border: 1px solid var(--border);
+  position: relative;
 }
 
 .screen { display: flex; flex-direction: column; height: 100vh; }
 .hidden { display: none !important; }
+
+/* ── SESSIONS PANEL (overlay) ── */
+#sessions-panel {
+  position: absolute;
+  inset: 0;
+  background: var(--bg);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--radius);
+}
+
+.sessions-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  flex-shrink: 0;
+  border-radius: var(--radius) var(--radius) 0 0;
+}
+
+.sessions-title {
+  font-size: 13px;
+  font-weight: 600;
+  flex: 1;
+}
+
+.btn-new-session {
+  background: var(--accent);
+  color: #111;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 5px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-new-session:hover { background: var(--accent-hover); }
+
+#sessions-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+.session-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background 0.15s;
+  border: 1px solid transparent;
+}
+
+.session-item:hover { background: var(--surface2); }
+.session-item.active {
+  background: var(--surface2);
+  border-color: var(--accent);
+}
+
+.session-item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.session-item-name {
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--text);
+}
+
+.session-item-name-input {
+  font-size: 13px;
+  font-weight: 500;
+  background: var(--surface3);
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  color: var(--text);
+  padding: 1px 6px;
+  width: 100%;
+  outline: none;
+}
+
+.session-item-meta {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.session-item-actions {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.session-item:hover .session-item-actions { opacity: 1; }
+
+.session-action-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 13px;
+  padding: 3px 5px;
+  border-radius: 4px;
+  line-height: 1;
+  transition: color 0.15s, background 0.15s;
+}
+.session-action-btn:hover { color: var(--text); background: var(--surface3); }
+.session-action-btn.danger:hover { color: var(--error); }
 
 /* ── LOGIN ── */
 .login-header {
@@ -42,17 +169,13 @@ body {
   padding: 32px 24px 16px;
 }
 
-.logo {
-  font-size: 28px;
-  color: var(--accent);
-}
+.logo { font-size: 28px; color: var(--accent); }
 
 .login-header h1 {
   font-size: 18px;
   font-weight: 600;
   line-height: 1.3;
 }
-
 .login-header h1 span {
   color: var(--text-muted);
   font-size: 13px;
@@ -77,10 +200,7 @@ body {
   outline: none;
   transition: border-color 0.2s;
 }
-
-#login-form input:focus {
-  border-color: var(--accent);
-}
+#login-form input:focus { border-color: var(--accent); }
 
 #login-btn {
   background: var(--accent);
@@ -94,7 +214,6 @@ body {
   margin-top: 4px;
   transition: background 0.2s;
 }
-
 #login-btn:hover { background: var(--accent-hover); }
 #login-btn:disabled { opacity: 0.5; cursor: default; }
 
@@ -108,27 +227,28 @@ body {
 .chat-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 10px 14px;
+  gap: 8px;
+  padding: 8px 10px;
   border-bottom: 1px solid var(--border);
   background: var(--surface);
   -webkit-app-region: drag;
   flex-shrink: 0;
 }
 
-.header-left {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  -webkit-app-region: drag;
+.sessions-toggle {
+  -webkit-app-region: no-drag;
+  font-size: 15px;
 }
 
-.logo-small { font-size: 16px; color: var(--accent); }
-
-.header-title {
-  font-size: 13px;
+.session-name-header {
+  flex: 1;
+  font-size: 12px;
   font-weight: 600;
   color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-app-region: drag;
 }
 
 .header-right {
@@ -136,65 +256,52 @@ body {
   align-items: center;
   gap: 6px;
   -webkit-app-region: no-drag;
+  flex-shrink: 0;
 }
 
 .status-dot {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
   display: inline-block;
+  flex-shrink: 0;
 }
-
 .status-dot.online { background: #4caf77; }
-.status-dot.offline { background: #888; }
+.status-dot.offline { background: #555; }
 
 .icon-btn {
   background: none;
   border: none;
   color: var(--text-muted);
   cursor: pointer;
-  font-size: 16px;
-  padding: 2px 6px;
+  font-size: 15px;
+  padding: 3px 6px;
   border-radius: 4px;
   line-height: 1;
   transition: color 0.15s, background 0.15s;
 }
-
-.icon-btn:hover {
-  color: var(--text);
-  background: var(--surface2);
-}
+.icon-btn:hover { color: var(--text); background: var(--surface2); }
 
 /* ── MESSAGES ── */
 .messages {
   flex: 1;
   overflow-y: auto;
-  padding: 14px;
+  padding: 12px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
   scrollbar-width: thin;
   scrollbar-color: var(--border) transparent;
 }
 
-.msg {
-  display: flex;
-  max-width: 88%;
-}
-
-.msg.user {
-  align-self: flex-end;
-  flex-direction: row-reverse;
-}
-
-.msg.bot {
-  align-self: flex-start;
-}
+.msg { display: flex; max-width: 90%; }
+.msg.user { align-self: flex-end; flex-direction: row-reverse; }
+.msg.bot  { align-self: flex-start; }
 
 .bubble {
-  padding: 9px 13px;
+  padding: 8px 12px;
   border-radius: var(--radius);
-  font-size: 13.5px;
+  font-size: 13px;
   line-height: 1.5;
   white-space: pre-wrap;
   word-break: break-word;
@@ -204,19 +311,13 @@ body {
   background: var(--user-bubble);
   border-bottom-right-radius: 4px;
 }
-
 .msg.bot .bubble {
   background: var(--bot-bubble);
   border: 1px solid var(--border);
   border-bottom-left-radius: 4px;
 }
+.typing .bubble { color: var(--text-muted); font-style: italic; }
 
-.typing .bubble {
-  color: var(--text-muted);
-  font-style: italic;
-}
-
-/* ── ACCIONES EJECUTADAS ── */
 .actions-executed {
   font-size: 11px;
   color: var(--text-muted);
@@ -224,30 +325,21 @@ body {
   margin-top: 6px;
   padding-top: 5px;
 }
+.actions-executed span { display: block; color: #4caf77; }
 
-.actions-executed span {
-  display: block;
-  color: #4caf77;
-}
-
-/* ── CONFIRMACIÓN PENDIENTE ── */
+/* ── PENDING ACTION ── */
 .pending-action {
   background: var(--surface2);
   border-top: 1px solid var(--border);
-  padding: 12px 14px;
+  padding: 10px 12px;
   flex-shrink: 0;
 }
-
 .pending-action p {
-  font-size: 13px;
-  margin-bottom: 10px;
+  font-size: 12px;
+  margin-bottom: 8px;
   color: var(--text);
 }
-
-.pending-buttons {
-  display: flex;
-  gap: 8px;
-}
+.pending-buttons { display: flex; gap: 8px; }
 
 .btn-confirm {
   flex: 1;
@@ -255,13 +347,12 @@ body {
   color: #fff;
   border: none;
   border-radius: var(--radius-sm);
-  padding: 8px;
-  font-size: 13px;
+  padding: 7px;
+  font-size: 12px;
   font-weight: 600;
   cursor: pointer;
   transition: opacity 0.2s;
 }
-
 .btn-confirm:hover { opacity: 0.85; }
 
 .btn-cancel {
@@ -270,23 +361,63 @@ body {
   color: var(--text-muted);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  padding: 8px;
-  font-size: 13px;
+  padding: 7px;
+  font-size: 12px;
   cursor: pointer;
   transition: color 0.2s;
 }
-
 .btn-cancel:hover { color: var(--text); }
 
-/* ── INPUT ── */
+/* ── CONTEXT BADGE ── */
+.context-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  background: #2a3a2a;
+  border-top: 1px solid #3a5a3a;
+  font-size: 11px;
+  color: #7ac47a;
+  flex-shrink: 0;
+}
+.remove-ctx-btn {
+  background: none;
+  border: none;
+  color: #7ac47a;
+  cursor: pointer;
+  font-size: 12px;
+  padding: 0 2px;
+  line-height: 1;
+  opacity: 0.7;
+  transition: opacity 0.15s;
+}
+.remove-ctx-btn:hover { opacity: 1; }
+
+/* ── CHAT INPUT ── */
 .chat-input {
   display: flex;
-  gap: 8px;
-  padding: 10px 12px;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 10px;
   border-top: 1px solid var(--border);
   background: var(--surface);
   flex-shrink: 0;
 }
+
+.ctx-btn {
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 6px;
+  transition: background 0.15s;
+  flex-shrink: 0;
+  opacity: 0.5;
+  line-height: 1;
+}
+.ctx-btn:hover { background: var(--surface2); opacity: 0.8; }
+.ctx-btn.active { opacity: 1; background: #2a3a2a; }
 
 .chat-input input {
   flex: 1;
@@ -294,28 +425,22 @@ body {
   border: 1px solid var(--border);
   border-radius: 20px;
   color: var(--text);
-  padding: 8px 14px;
+  padding: 7px 13px;
   font-size: 13px;
   outline: none;
   transition: border-color 0.2s;
 }
+.chat-input input:focus { border-color: var(--accent); }
+.chat-input input:disabled { opacity: 0.5; }
 
-.chat-input input:focus {
-  border-color: var(--accent);
-}
-
-.chat-input input:disabled {
-  opacity: 0.5;
-}
-
-.chat-input button {
+.chat-input button[type="submit"] {
   background: var(--accent);
   color: #111;
   border: none;
   border-radius: 50%;
-  width: 34px;
-  height: 34px;
-  font-size: 16px;
+  width: 32px;
+  height: 32px;
+  font-size: 15px;
   font-weight: 700;
   cursor: pointer;
   display: flex;
@@ -324,6 +449,15 @@ body {
   flex-shrink: 0;
   transition: background 0.2s;
 }
+.chat-input button[type="submit"]:hover { background: var(--accent-hover); }
+.chat-input button[type="submit"]:disabled { opacity: 0.4; cursor: default; }
 
-.chat-input button:hover { background: var(--accent-hover); }
-.chat-input button:disabled { opacity: 0.4; cursor: default; }
+/* ── EMPTY STATE ── */
+.empty-state {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 12px;
+  padding: 20px;
+  line-height: 1.7;
+}
+.empty-state .logo-big { font-size: 32px; display: block; margin-bottom: 8px; }
