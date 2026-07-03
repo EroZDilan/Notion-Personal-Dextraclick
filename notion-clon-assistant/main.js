@@ -65,14 +65,13 @@ function toggleWindow() {
 }
 
 function createTray() {
-  // Crear icono simple con nativeImage (16x16 blanco si no hay archivo)
+  const iconFile = process.platform === 'win32' ? 'icon.ico' : 'icon.png'
+  const iconPath = path.join(__dirname, 'assets', iconFile)
   let icon
-  const iconPath = path.join(__dirname, 'assets', 'icon.png')
   try {
     icon = nativeImage.createFromPath(iconPath)
     if (icon.isEmpty()) throw new Error('empty')
   } catch {
-    // Icono de fallback: imagen vacía redimensionada
     icon = nativeImage.createEmpty()
   }
 
