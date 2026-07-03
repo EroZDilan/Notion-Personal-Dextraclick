@@ -4,7 +4,8 @@
   "description": "Asistente IA para NotionClon",
   "main": "main.js",
   "scripts": {
-    "start": "env -u ELECTRON_RUN_AS_NODE ELECTRON_OZONE_PLATFORM_HINT=auto electron . --no-sandbox"
+    "start": "env -u ELECTRON_RUN_AS_NODE ELECTRON_OZONE_PLATFORM_HINT=auto electron . --no-sandbox",
+    "start:win": "electron . --no-sandbox"
   },
   "dependencies": {
     "electron": "^33.0.0"

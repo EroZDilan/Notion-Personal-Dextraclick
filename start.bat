@@ -3,7 +3,7 @@ echo Arrancando NotionClon...
 
 start "Backend" cmd /k "cd /d "%~dp0NotionClon.API" && dotnet run"
 start "Frontend" cmd /k "cd /d "%~dp0notion-clon-client" && npm run dev"
-start "Asistente IA" cmd /k "cd /d "%~dp0notion-clon-assistant" && set ELECTRON_RUN_AS_NODE= && npm start"
+start "Asistente IA" cmd /k "cd /d "%~dp0notion-clon-assistant" && set ELECTRON_RUN_AS_NODE= && npm run start:win"
 
 echo.
 echo NotionClon corriendo:
