@@ -63,3 +63,40 @@ export interface ComentarioDto {
   texto: string
   creadaEn: string
 }
+
+export type Prioridad = 'Alta' | 'Media' | 'Baja'
+export type EstadoTarea = 'Todo' | 'EnProgreso' | 'Hecho'
+
+export interface TareaDto {
+  id: string
+  titulo: string
+  descripcion?: string | null
+  prioridad: Prioridad
+  estado: EstadoTarea
+  fechaLimite?: string | null
+  creadaEn: string
+  actualizadaEn: string
+  totalPasos: number
+  pasosCompletados: number
+}
+
+export interface PasoDto {
+  id: string
+  titulo: string
+  completado: boolean
+  orden: number
+  subtareaId?: string | null
+}
+
+export interface SubtareaDto {
+  id: string
+  titulo: string
+  estado: EstadoTarea
+  orden: number
+  pasos: PasoDto[]
+}
+
+export interface TareaDetalleDto extends TareaDto {
+  subtareas: SubtareaDto[]
+  pasos: PasoDto[]
+}

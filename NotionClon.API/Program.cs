@@ -51,6 +51,7 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddScoped<IPaginaService, PaginaService>();
 builder.Services.AddScoped<IBloqueService, BloqueService>();
 builder.Services.AddScoped<IComentarioService, ComentarioService>();
+builder.Services.AddScoped<ITareaService, TareaService>();
 builder.Services.AddScoped<ImagenService>();
 builder.Services.AddScoped<IChatService, ChatService>();
 builder.Services.AddHttpClient<ChatService>();

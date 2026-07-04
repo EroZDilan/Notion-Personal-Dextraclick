@@ -12,13 +12,15 @@ public class ChatService : IChatService
     private readonly HttpClient _http;
     private readonly IPaginaService _paginas;
     private readonly IBloqueService _bloques;
+    private readonly ITareaService _tareas;
     private readonly IConfiguration _config;
 
-    public ChatService(HttpClient http, IPaginaService paginas, IBloqueService bloques, IConfiguration config)
+    public ChatService(HttpClient http, IPaginaService paginas, IBloqueService bloques, ITareaService tareas, IConfiguration config)
     {
         _http = http;
         _paginas = paginas;
         _bloques = bloques;
+        _tareas = tareas;
         _config = config;
     }
 
@@ -39,17 +41,25 @@ public class ChatService : IChatService
             {request.ContextoConversacion}
             """;
 
+        var tareasList = await _tareas.ListarAsync(usuarioId);
+        var tareasTexto = tareasList.Count == 0 ? "(sin tareas)" :
+            string.Join("\n", tareasList.Select(t =>
+                $"[{t.Prioridad}][{t.Estado}] {t.Titulo} (id:{t.Id}) {t.PasosCompletados}/{t.TotalPasos} pasos"));
+
         var systemPrompt = $"""
-            Eres el asistente inteligente de NotionClon, una app de notas al estilo Notion.
-            Controlas completamente el espacio de notas del usuario.
+            Eres el asistente inteligente de NotionClon, una app de notas y tareas al estilo Notion.
+            Controlas completamente el espacio del usuario: notas y tareas.
             Responde siempre en español. Sé conciso y directo.
             Cuando ejecutes acciones, confirma brevemente lo que hiciste.
 
             ÁRBOL DE PÁGINAS ACTUAL:
-            {(string.IsNullOrWhiteSpace(arbolTexto) ? "(sin páginas aún)" : arbolTexto)}{contextoSection}
+            {(string.IsNullOrWhiteSpace(arbolTexto) ? "(sin páginas aún)" : arbolTexto)}
+            TAREAS ACTUALES:
+            {tareasTexto}{contextoSection}
 
             Para leer el contenido de una página, usa get_page_content con su ID.
             Para crear bloques, primero obtén el ID de la página con get_page_content.
+            Para ver los pasos/subtareas de una tarea, usa get_task con su ID.
             """;
 
         var messages = new JsonArray
@@ -130,7 +140,7 @@ public class ChatService : IChatService
                 catch { args = new JsonObject(); }
 
                 // Acciones destructivas: pedir confirmación
-                if (toolName is "delete_block" or "archive_page")
+                if (toolName is "delete_block" or "archive_page" or "delete_task")
                 {
                     var (desc, parametros) = DescribirAccionDestructiva(toolName, args);
                     var pregunta = toolName == "delete_block"
@@ -194,6 +204,16 @@ public class ChatService : IChatService
         catch (Exception ex)
         {
             return Error($"Error al ejecutar la acción: {ex.Message}");
+        }
+        if (accion.Tipo == "delete_task")
+        {
+            var id = Guid.Parse(accion.Parametros["tareaId"]);
+            await _tareas.EliminarAsync(id, usuarioId);
+            return new ChatResponseDto
+            {
+                Respuesta = $"Tarea \"{accion.Parametros.GetValueOrDefault("titulo", "")}\" eliminada.",
+                AccionesEjecutadas = [new AccionEjecutadaDto { Tipo = "delete_task", Descripcion = "Tarea eliminada" }]
+            };
         }
         return Error("Acción no reconocida.");
     }
@@ -302,6 +322,120 @@ public class ChatService : IChatService
                     });
                 }
 
+                case "list_tasks":
+                {
+                    var estado = args["estado"]?.GetValue<string>();
+                    var prioridad = args["prioridad"]?.GetValue<string>();
+                    var lista = await _tareas.ListarAsync(usuarioId, estado, prioridad);
+                    if (!lista.Any()) return ("No hay tareas.", null);
+                    var texto = string.Join("\n", lista.Select(t =>
+                        $"[{t.Prioridad}][{t.Estado}] {t.Titulo} (id:{t.Id}) {t.PasosCompletados}/{t.TotalPasos} pasos" +
+                        (t.FechaLimite.HasValue ? $" — límite:{t.FechaLimite.Value:dd/MM/yyyy}" : "")));
+                    return (texto, null);
+                }
+
+                case "get_task":
+                {
+                    var idStr = args["task_id"]?.GetValue<string>() ?? "";
+                    if (!Guid.TryParse(idStr, out var id)) return ("Error: task_id inválido.", null);
+                    var t = await _tareas.ObtenerAsync(id, usuarioId);
+                    var sb = new System.Text.StringBuilder();
+                    sb.AppendLine($"Tarea: {t.Titulo} [{t.Prioridad}][{t.Estado}]");
+                    if (!string.IsNullOrWhiteSpace(t.Descripcion)) sb.AppendLine($"Descripción: {t.Descripcion}");
+                    if (t.FechaLimite.HasValue) sb.AppendLine($"Límite: {t.FechaLimite.Value:dd/MM/yyyy}");
+                    foreach (var s in t.Subtareas)
+                    {
+                        sb.AppendLine($"  Subtarea: {s.Titulo} [{s.Estado}] (id:{s.Id})");
+                        foreach (var p in s.Pasos)
+                            sb.AppendLine($"    [{(p.Completado ? "x" : " ")}] {p.Titulo} (id:{p.Id})");
+                    }
+                    foreach (var p in t.Pasos)
+                        sb.AppendLine($"  [{(p.Completado ? "x" : " ")}] {p.Titulo} (id:{p.Id})");
+                    return (sb.ToString(), null);
+                }
+
+                case "create_task":
+                {
+                    var titulo = args["titulo"]?.GetValue<string>() ?? "Nueva tarea";
+                    var prioridad = args["prioridad"]?.GetValue<string>() ?? "Media";
+                    var desc = args["descripcion"]?.GetValue<string>();
+                    DateTime? fecha = null;
+                    if (args["fecha_limite"]?.GetValue<string>() is string fl && DateTime.TryParse(fl, out var fd))
+                        fecha = fd;
+                    var tarea = await _tareas.CrearAsync(new CrearTareaDto
+                    {
+                        Titulo = titulo, Prioridad = prioridad, Descripcion = desc, FechaLimite = fecha
+                    }, usuarioId);
+                    return ($"Tarea creada. id:{tarea.Id}", new AccionEjecutadaDto
+                    {
+                        Tipo = "create_task", Descripcion = $"Tarea creada: {titulo}"
+                    });
+                }
+
+                case "update_task":
+                {
+                    var idStr = args["task_id"]?.GetValue<string>() ?? "";
+                    if (!Guid.TryParse(idStr, out var id)) return ("Error: task_id inválido.", null);
+                    var dto = new ActualizarTareaDto
+                    {
+                        Titulo = args["titulo"]?.GetValue<string>(),
+                        Descripcion = args["descripcion"]?.GetValue<string>(),
+                        Prioridad = args["prioridad"]?.GetValue<string>(),
+                        Estado = args["estado"]?.GetValue<string>()
+                    };
+                    if (args["fecha_limite"]?.GetValue<string>() is string fl2)
+                        dto.FechaLimite = DateTime.TryParse(fl2, out var fd2) ? fd2 : null;
+                    await _tareas.ActualizarAsync(id, dto, usuarioId);
+                    return ("Tarea actualizada.", new AccionEjecutadaDto { Tipo = "update_task", Descripcion = "Tarea actualizada" });
+                }
+
+                case "create_subtask":
+                {
+                    var tareaIdStr = args["task_id"]?.GetValue<string>() ?? "";
+                    if (!Guid.TryParse(tareaIdStr, out var tareaId)) return ("Error: task_id inválido.", null);
+                    var titulo = args["titulo"]?.GetValue<string>() ?? "";
+                    var sub = await _tareas.CrearSubtareaAsync(tareaId, new CrearSubtareaDto { Titulo = titulo }, usuarioId);
+                    return ($"Subtarea creada. id:{sub.Id}", new AccionEjecutadaDto
+                    {
+                        Tipo = "create_subtask", Descripcion = $"Subtarea: {titulo}"
+                    });
+                }
+
+                case "create_step":
+                {
+                    var titulo = args["titulo"]?.GetValue<string>() ?? "";
+                    var tareaIdStr = args["task_id"]?.GetValue<string>();
+                    var subIdStr = args["subtask_id"]?.GetValue<string>();
+                    PasoDto paso;
+                    if (Guid.TryParse(subIdStr, out var subId))
+                        paso = await _tareas.CrearPasoEnSubtareaAsync(subId, new CrearPasoDto { Titulo = titulo }, usuarioId);
+                    else if (Guid.TryParse(tareaIdStr, out var tareaId))
+                        paso = await _tareas.CrearPasoEnTareaAsync(tareaId, new CrearPasoDto { Titulo = titulo }, usuarioId);
+                    else return ("Error: se requiere task_id o subtask_id.", null);
+                    return ($"Paso creado. id:{paso.Id}", new AccionEjecutadaDto
+                    {
+                        Tipo = "create_step", Descripcion = $"Paso: {titulo}"
+                    });
+                }
+
+                case "mark_step":
+                {
+                    var idStr = args["step_id"]?.GetValue<string>() ?? "";
+                    if (!Guid.TryParse(idStr, out var id)) return ("Error: step_id inválido.", null);
+                    var completado = args["completado"]?.GetValue<bool>() ?? true;
+                    await _tareas.ActualizarPasoAsync(id, new ActualizarPasoDto { Completado = completado }, usuarioId);
+                    return ($"Paso marcado como {(completado ? "completado" : "pendiente")}.",
+                        new AccionEjecutadaDto { Tipo = "mark_step", Descripcion = $"Paso {(completado ? "completado" : "desmarcado")}" });
+                }
+
+                case "delete_task":
+                {
+                    var idStr = args["task_id"]?.GetValue<string>() ?? "";
+                    if (!Guid.TryParse(idStr, out var id)) return ("Error: task_id inválido.", null);
+                    var t = await _tareas.ObtenerAsync(id, usuarioId);
+                    return (string.Empty, null); // señal para pedir confirmación — se maneja arriba
+                }
+
                 default:
                     return ($"Tool desconocida: {toolName}", null);
             }
@@ -319,9 +453,15 @@ public class ChatService : IChatService
             var id = args["block_id"]?.GetValue<string>() ?? "";
             return ("Eliminar bloque", new Dictionary<string, string> { ["bloqueId"] = id });
         }
+        if (tipo == "delete_task")
+        {
+            var id = args["task_id"]?.GetValue<string>() ?? "";
+            var titulo = args["titulo"]?.GetValue<string>() ?? "esta tarea";
+            return ($"Eliminar tarea: {titulo}", new Dictionary<string, string> { ["tareaId"] = id, ["titulo"] = titulo });
+        }
         var pId = args["page_id"]?.GetValue<string>() ?? "";
-        var titulo = args["titulo"]?.GetValue<string>() ?? "";
-        return ($"Archivar página: {titulo}", new Dictionary<string, string> { ["paginaId"] = pId, ["titulo"] = titulo });
+        var ptitulo = args["titulo"]?.GetValue<string>() ?? "";
+        return ($"Archivar página: {ptitulo}", new Dictionary<string, string> { ["paginaId"] = pId, ["titulo"] = ptitulo });
     }
 
     private static string SerializarArbol(List<PaginaDto> paginas, int nivel)
@@ -381,7 +521,53 @@ public class ChatService : IChatService
         {
             ["page_id"] = Prop("string", "ID de la página"),
             ["titulo"] = Prop("string", "Título de la página")
-        }, ["page_id"])
+        }, ["page_id"]),
+        Tool("list_tasks", "Lista las tareas del usuario.", new JsonObject
+        {
+            ["estado"] = Prop("string", "Filtrar por estado: Todo, EnProgreso, Hecho"),
+            ["prioridad"] = Prop("string", "Filtrar por prioridad: Alta, Media, Baja")
+        }),
+        Tool("get_task", "Obtiene detalle de una tarea con sus subtareas y pasos.", new JsonObject
+        {
+            ["task_id"] = Prop("string", "ID de la tarea")
+        }, ["task_id"]),
+        Tool("create_task", "Crea una nueva tarea.", new JsonObject
+        {
+            ["titulo"] = Prop("string", "Título de la tarea"),
+            ["prioridad"] = Prop("string", "Alta, Media o Baja"),
+            ["descripcion"] = Prop("string", "Descripción opcional"),
+            ["fecha_limite"] = Prop("string", "Fecha límite ISO (ej: 2026-07-10)")
+        }, ["titulo"]),
+        Tool("update_task", "Actualiza metadatos de una tarea.", new JsonObject
+        {
+            ["task_id"] = Prop("string", "ID de la tarea"),
+            ["titulo"] = Prop("string", "Nuevo título"),
+            ["prioridad"] = Prop("string", "Alta, Media o Baja"),
+            ["estado"] = Prop("string", "Todo, EnProgreso o Hecho"),
+            ["descripcion"] = Prop("string", "Nueva descripción"),
+            ["fecha_limite"] = Prop("string", "Nueva fecha límite ISO")
+        }, ["task_id"]),
+        Tool("create_subtask", "Añade una subtarea a una tarea.", new JsonObject
+        {
+            ["task_id"] = Prop("string", "ID de la tarea"),
+            ["titulo"] = Prop("string", "Título de la subtarea")
+        }, ["task_id", "titulo"]),
+        Tool("create_step", "Añade un paso a una tarea (directo) o a una subtarea.", new JsonObject
+        {
+            ["titulo"] = Prop("string", "Título del paso"),
+            ["task_id"] = Prop("string", "ID de la tarea (para paso directo)"),
+            ["subtask_id"] = Prop("string", "ID de la subtarea (si el paso va dentro de una subtarea)")
+        }, ["titulo"]),
+        Tool("mark_step", "Marca o desmarca un paso como completado.", new JsonObject
+        {
+            ["step_id"] = Prop("string", "ID del paso"),
+            ["completado"] = Prop("boolean", "true para completar, false para desmarcar")
+        }, ["step_id"]),
+        Tool("delete_task", "Elimina una tarea. Requiere confirmación del usuario.", new JsonObject
+        {
+            ["task_id"] = Prop("string", "ID de la tarea"),
+            ["titulo"] = Prop("string", "Título de la tarea")
+        }, ["task_id"])
     };
 
     private static JsonObject Tool(string name, string desc, JsonObject props, string[]? required = null)

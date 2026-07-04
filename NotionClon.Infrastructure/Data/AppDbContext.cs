@@ -13,6 +13,9 @@ public class AppDbContext : IdentityDbContext<IdentityUser>
     public DbSet<Bloque> Bloques => Set<Bloque>();
     public DbSet<VersionBloque> VersionesBloque => Set<VersionBloque>();
     public DbSet<Comentario> Comentarios => Set<Comentario>();
+    public DbSet<Tarea> Tareas => Set<Tarea>();
+    public DbSet<Subtarea> Subtareas => Set<Subtarea>();
+    public DbSet<Paso> Pasos => Set<Paso>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -66,6 +69,38 @@ public class AppDbContext : IdentityDbContext<IdentityUser>
             e.HasKey(c => c.Id);
             e.Property(c => c.Texto).HasMaxLength(2000);
             e.HasIndex(c => c.BloqueId);
+        });
+
+        builder.Entity<Tarea>(e =>
+        {
+            e.HasKey(t => t.Id);
+            e.Property(t => t.Titulo).HasMaxLength(500);
+            e.Property(t => t.UsuarioId).IsRequired();
+            e.HasIndex(t => t.UsuarioId);
+            e.HasMany(t => t.Subtareas)
+                .WithOne(s => s.Tarea)
+                .HasForeignKey(s => s.TareaId)
+                .OnDelete(DeleteBehavior.Cascade);
+            e.HasMany(t => t.Pasos)
+                .WithOne(p => p.Tarea)
+                .HasForeignKey(p => p.TareaId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        builder.Entity<Subtarea>(e =>
+        {
+            e.HasKey(s => s.Id);
+            e.Property(s => s.Titulo).HasMaxLength(500);
+            e.HasMany(s => s.Pasos)
+                .WithOne(p => p.Subtarea)
+                .HasForeignKey(p => p.SubtareaId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        builder.Entity<Paso>(e =>
+        {
+            e.HasKey(p => p.Id);
+            e.Property(p => p.Titulo).HasMaxLength(500);
         });
     }
 }
